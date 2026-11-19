@@ -6,7 +6,7 @@ const money = (v = 0) => Number(v || 0).toLocaleString('pt-BR', { style: 'curren
 const date = (v) => v ? new Date(v).toLocaleString('pt-BR') : '—';
 const esc = (v = '') => String(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const id = () => crypto.randomUUID();
-let supabase, session, config = {}, state = {}, authMode = new URLSearchParams(location.search).get('auth') !== 'signup' ? 'login' : 'signup';
+let supabase, session, config = {}, state = {}, authMode = location.pathname === '/cadastro' || new URLSearchParams(location.search).get('auth') === 'signup' ? 'signup' : 'login';
 
 const demoState = {
   profile: { id: 'demo', full_name: 'Operação Bear', email: 'demo@bearpay.com.br', role: 'admin', kyc_tier: 'kyc2', kyc_status: 'approved', balance_available: 18462.80, balance_pending: 1280.20 },
