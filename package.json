@@ -1,0 +1,19 @@
+{
+  "name": "bearpay-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node --check assets/app.js && node --check api/action.js && node --check api/webhooks/lunar.js && node --check api/webhooks/mistic.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "vercel": "^39.3.0"
+  },
+  "engines": { "node": ">=20" }
+}
+

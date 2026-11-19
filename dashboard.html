@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111b">
+  <title>BearPay — Painel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <div id="toast" aria-live="polite"></div>
+  <section id="authView" class="auth-shell">
+    <a class="brand auth-brand" href="/"><span class="bear-mark">B</span><span>BearPay</span></a>
+    <div class="auth-card">
+      <div class="eyebrow">CONTA BEARPAY</div>
+      <h1 id="authTitle">Bem-vindo de volta.</h1>
+      <p id="authSubtitle">Acesse sua operação com segurança.</p>
+      <form id="authForm">
+        <label class="signup-only">Nome completo<input name="name" autocomplete="name" placeholder="Seu nome"></label>
+        <label>E-mail<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com"></label>
+        <label>Senha<input name="password" type="password" minlength="8" autocomplete="current-password" required placeholder="Mínimo 8 caracteres"></label>
+        <fieldset class="signup-only kyc-choice">
+          <legend>Como você quer começar?</legend>
+          <label><input type="radio" name="tier" value="kyc1" checked><span><b>KYC 1 · acesso imediato</b><small>Lunar/PixGhost · 8% + R$ 2,50 por venda · saque 9%</small></span></label>
+          <label><input type="radio" name="tier" value="kyc2"><span><b>KYC 2 · taxas menores</b><small>Mistic · 5% + R$ 1,80 por venda · saque 5% + R$ 1,00</small></span></label>
+        </fieldset>
+        <button class="primary wide" type="submit" id="authSubmit">Entrar</button>
+      </form>
+      <button class="text-button" id="authSwitch">Ainda não tenho conta</button>
+      <p class="legal signup-only">Ao criar sua conta, você concorda com os Termos de Uso e a Política de Privacidade.</p>
+    </div>
+    <div class="auth-art"><div class="aurora"></div><div class="ice-card"><span>OPERAÇÃO SEGURA</span><strong>PIX em tempo real.<br>Controle de ponta a ponta.</strong><small>Infraestrutura criada para quem vende.</small></div></div>
+  </section>
+
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="#overview"><span class="bear-mark">B</span><span>BearPay</span></a>
+      <div class="account-chip"><div class="avatar" id="avatar">B</div><div><b id="userName">Conta Bear</b><small id="userTier">Carregando…</small></div><button id="collapseBtn" title="Recolher menu">‹</button></div>
+      <nav id="sideNav" aria-label="Navegação principal"></nav>
+      <div class="sidebar-foot"><button id="supportQuick">Precisa de ajuda?<small>Abra um ticket</small></button><button id="signOutBtn" class="logout">Sair</button></div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <button id="mobileMenu" class="icon-btn" aria-label="Abrir menu">☰</button>
+        <div class="search"><span>⌕</span><input id="globalSearch" placeholder="Buscar transação, cliente ou ID"></div>
+        <div class="top-actions"><div class="status-pill"><i></i> Sistemas operacionais</div><button class="icon-btn" id="themeBtn" title="Alternar tema">◐</button><button class="icon-btn" title="Notificações">♢</button><div class="avatar mini" id="avatarTop">B</div></div>
+      </header>
+      <div id="page" class="page"></div>
+    </main>
+  </div>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>
+

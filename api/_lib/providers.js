@@ -1,0 +1,17 @@
+const lunarBase = 'https://pixghost.site';
+const misticBase = 'https://api.misticpay.com/api';
+async function jsonFetch(url, options) { const response=await fetch(url,options);const data=await response.json().catch(()=>({}));if(!response.ok)throw Object.assign(new Error(data.message||data.error||`Gateway respondeu ${response.status}`),{status:502,providerStatus:response.status,details:data});return data; }
+function lunarHeaders(){if(!process.env.LUNARPAY_API_KEY)throw new Error('LUNARPAY_API_KEY não configurada');return {'Content-Type':'application/json',Authorization:`Bearer ${process.env.LUNARPAY_API_KEY}`};}
+function misticHeaders(idempotencyKey){if(!process.env.MISTICPAY_CLIENT_ID||!process.env.MISTICPAY_CLIENT_SECRET)throw new Error('Credenciais Mistic não configuradas');return {'Content-Type':'application/json',Authorization:`Basic ${Buffer.from(`${process.env.MISTICPAY_CLIENT_ID}:${process.env.MISTICPAY_CLIENT_SECRET}`).toString('base64')}`,...(idempotencyKey?{'X-Idempotency-Key':idempotencyKey}:{})};}
+export async function createProviderPayment(provider, input) {
+  const callback = `${process.env.APP_URL}/api/webhooks/${provider}${provider==='mistic'?`?secret=${encodeURIComponent(process.env.WEBHOOK_SHARED_SECRET||'')}`:''}`;
+  if(provider==='lunar') { const d=await jsonFetch(`${lunarBase}/api.php`,{method:'POST',headers:lunarHeaders(),body:JSON.stringify({amount:input.amount,external_id:input.externalId,callback_url:callback,tracking_params:input.tracking||{}})});return {provider_id:d.pix_id,status:'pending',pix_code:d.pix_code,qr_image:d.qr_image,raw:d}; }
+  const d=await jsonFetch(`${misticBase}/transactions/create`,{method:'POST',headers:misticHeaders(),body:JSON.stringify({amount:input.amount,payerName:input.payerName,payerDocument:input.payerDocument.replace(/\D/g,''),transactionId:input.externalId,description:input.description,projectWebhook:callback})});return {provider_id:String(d.data?.transactionId||input.externalId),status:'pending',pix_code:d.data?.copyPaste,qr_image:d.data?.qrcodeUrl||d.data?.qrCodeBase64,raw:d};
+}
+export async function sendProviderWithdrawal(provider, input) {
+  const callback=`${process.env.APP_URL}/api/webhooks/${provider}${provider==='mistic'?`?secret=${encodeURIComponent(process.env.WEBHOOK_SHARED_SECRET||'')}`:''}`;
+  if(provider==='lunar'){const d=await jsonFetch(`${lunarBase}/api_send_pix.php`,{method:'POST',headers:lunarHeaders(),body:JSON.stringify({amount:input.amount,key:input.pixKey,key_type:input.pixKeyType,description:'Saque BearPay',external_id:input.id,callback_url:callback})});return {provider_id:String(d.transfer_id),status:d.status==='completed'?'completed':'processing',raw:d};}
+  const type={cpf:'CPF',cnpj:'CNPJ',email:'EMAIL',telefone:'TELEFONE',aleatoria:'CHAVE_ALEATORIA'}[input.pixKeyType]||input.pixKeyType.toUpperCase();const d=await jsonFetch(`${misticBase}/transactions/withdraw`,{method:'POST',headers:misticHeaders(input.id),body:JSON.stringify({amount:input.amount,pixKey:input.pixKey.replace(/[.\-/() ]/g,''),pixKeyType:type,description:'Saque BearPay',projectWebhook:callback})});return {provider_id:String(d.data?.transactionId||d.data?.jobId),status:'processing',raw:d};
+}
+export async function checkProviderPayment(provider, providerId, externalId){if(provider==='lunar')return jsonFetch(`${lunarBase}/check_status.php?external_id=${encodeURIComponent(externalId)}`,{headers:lunarHeaders()});return jsonFetch(`${misticBase}/transactions/check`,{method:'POST',headers:misticHeaders(),body:JSON.stringify({transactionId:providerId})});}
+

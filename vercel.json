@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/app", "destination": "/dashboard.html" },
+    { "source": "/login", "destination": "/dashboard.html?auth=login" },
+    { "source": "/cadastro", "destination": "/dashboard.html?auth=signup" },
+    { "source": "/checkout/:slug", "destination": "/checkout.html?slug=:slug" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(self), microphone=()" }
+      ]
+    }
+  ]
+}
+
